@@ -47,8 +47,8 @@ public:
   void DisclosureOfInvisibilityEffect();
   void DepartureInInvisibilityEffect();
 protected:
-  weak_ptr<Hobbit> owner;
-  string name;
+  weak_ptr<Hobbit> m_owner;
+  string m_name;
 };
 
 class Hobbit : public enable_shared_from_this<Hobbit> {
@@ -61,7 +61,7 @@ public:
   void PutOnTheRing();
   void FindRing(Ring* ring);
   bool HasRing() const {
-    return !(this->ring == nullptr);
+    return !(this->m_ring == nullptr);
   }
 
   void LostRing();
@@ -72,8 +72,8 @@ public:
   const string& GetName() const;
 
 private:
-  unique_ptr<Hand> hand;
-  string name;
-  unique_ptr<Ring> ring;
-  shared_ptr<Food> food;
+  unique_ptr<Hand> m_hand;
+  string m_name;
+  unique_ptr<Ring> m_ring;
+  shared_ptr<Food> m_food;
 };

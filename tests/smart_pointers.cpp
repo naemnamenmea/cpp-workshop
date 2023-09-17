@@ -1,7 +1,7 @@
 #include "smart_pointers.h"
 
 Hobbit::Hobbit(string name)
-  : name(name) {}
+  : m_name(name) {}
 
 Hobbit::~Hobbit()
 {
@@ -10,19 +10,19 @@ Hobbit::~Hobbit()
 
 void Hobbit::Init()
 {
-  this->hand = unique_ptr<Hand>(new Hand(this));
-  this->hand->Wave();
+  this->m_hand = unique_ptr<Hand>(new Hand(this));
+  this->m_hand->Wave();
 }
 
 void Hobbit::Eat(int amount) {
-  if (this->food) {
-      amount = this->food->Eat(amount);
+  if (this->m_food) {
+      amount = this->m_food->Eat(amount);
     if (amount>0) {
-      cout << this->GetName() << " have eaten " << amount << " cakes from #" << food->GetId() << " food" << endl;
+      cout << this->GetName() << " have eaten " << amount << " cakes from #" << m_food->GetId() << " food" << endl;
     }
 
-    if (this->food->IsExpired()) {
-      this->food.reset();
+    if (this->m_food->IsExpired()) {
+      this->m_food.reset();
       if (amount > 0) {
         return;
       }
@@ -35,21 +35,21 @@ void Hobbit::Eat(int amount) {
 }
 
 void Hobbit::PutOnTheRing() {
-  this->ring->DepartureInInvisibilityEffect();
+  this->m_ring->DepartureInInvisibilityEffect();
 }
 
 void Hobbit::FindRing(Ring* ring)
 {
-  this->ring = unique_ptr<Ring>(ring);
-  this->ring->SetOwner(this->shared_from_this());
-  cout << this->GetName() << " find \'" << this->ring->GetName() << "\' ring" << endl;
+  this->m_ring = unique_ptr<Ring>(ring);
+  this->m_ring->SetOwner(this->shared_from_this());
+  cout << this->GetName() << " find \'" << this->m_ring->GetName() << "\' ring" << endl;
 }
 
 void Hobbit::LostRing()
 {
-  if (this->ring) {
-    cout << this->GetName() << " lost \'" << this->ring->GetName() << "\' ring" << endl;
-    this->ring = nullptr;
+  if (this->m_ring) {
+    cout << this->GetName() << " lost \'" << this->m_ring->GetName() << "\' ring" << endl;
+    this->m_ring = nullptr;
   }
   else {
     cout << this->GetName() << " has no ring to lose" << endl;
@@ -58,19 +58,19 @@ void Hobbit::LostRing()
 
 void Hobbit::FindFood(Food* food)
 {
-  this->food = shared_ptr<Food>(food);
+  this->m_food = shared_ptr<Food>(food);
 }
 
 void Hobbit::ShareFood(shared_ptr<Hobbit> hobbit)
 {
-  hobbit->food = this->food;
+  hobbit->m_food = this->m_food;
 }
 
 void Hobbit::GiveRing(shared_ptr<Hobbit> hobbit)
 {
   if (this->HasRing()) {
-    hobbit->ring = move(this->ring);
-    hobbit->ring->SetOwner(hobbit->shared_from_this());
+    hobbit->m_ring = move(this->m_ring);
+    hobbit->m_ring->SetOwner(hobbit->shared_from_this());
   }
   else {
     cout << "no ring to share" << endl;
@@ -78,14 +78,14 @@ void Hobbit::GiveRing(shared_ptr<Hobbit> hobbit)
 }
 
 void Hobbit::RemoveTheRing() {
-  ring->DisclosureOfInvisibilityEffect();
+  m_ring->DisclosureOfInvisibilityEffect();
 }
 
 const string& Hobbit::GetName() const {
-  return name;
+  return m_name;
 }
 
-Ring::Ring(string name) : name(name) { }
+Ring::Ring(string name) : m_name(name) { }
 
 Ring::~Ring()
 {}
@@ -96,7 +96,7 @@ void Ring::Whisper() const {
 
 void Ring::SetOwner(shared_ptr<Hobbit> owner)
 {
-  this->owner = weak_ptr<Hobbit>(owner);
+  this->m_owner = weak_ptr<Hobbit>(owner);
 }
 
 void Ring::ShowInscriptions() {
@@ -105,17 +105,17 @@ void Ring::ShowInscriptions() {
 
 const string& Ring::GetName() const
 {
-  return name;
+  return m_name;
 }
 
 void Ring::DisclosureOfInvisibilityEffect() {
-  if (auto tmp = this->owner.lock()) {
+  if (auto tmp = this->m_owner.lock()) {
     cout << tmp->GetName() << " becoming visible..." << endl;
   }
 }
 
 void Ring::DepartureInInvisibilityEffect() {
-  if (auto tmp = this->owner.lock()) {
+  if (auto tmp = this->m_owner.lock()) {
     cout << tmp->GetName() << " becoming invisible..." << endl;
   }
 }

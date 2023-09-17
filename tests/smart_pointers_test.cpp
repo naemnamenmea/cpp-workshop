@@ -1,6 +1,7 @@
 #include "smart_pointers.h"
+#include "my_testing_tools.hpp"
 
-int main(void)
+TEST(smartPointers, test1)
 {
   auto Sam = shared_ptr<Hobbit>(new Hobbit("Sam")); 
   Sam->Init();
@@ -29,6 +30,4 @@ int main(void)
   if (Frodo->HasRing()) {
     Frodo->PutOnTheRing();
   }
-
-  return 0;
 }
